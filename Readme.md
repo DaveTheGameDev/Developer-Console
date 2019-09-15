@@ -2,6 +2,7 @@
 
 I made this system to handle executing commands via a console GUI from unity.
 
+If you use this in your project hit me up on [twitter](https://twitter.com/ReignOfDave) or [linked in](https://www.linkedin.com/in/david-conway-gamedev/).
 
 ## Example Usage
 
