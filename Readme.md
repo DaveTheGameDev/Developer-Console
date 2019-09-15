@@ -2,7 +2,9 @@
 
 I made this system to handle executing commands via a console GUI from unity.
 
+If you use this in your project hit me up on [twitter](https://twitter.com/ReignOfDave) or [linked in](https://www.linkedin.com/in/david-conway-gamedev/).
 
+If you find a bug or have a suggestion feel free to open an issue or a create a pull request
 ## Example Usage
 
 Commands must be static methods. The reason i designed it to not support non static methods is because i felt as though it would lead to spaghetti code.
