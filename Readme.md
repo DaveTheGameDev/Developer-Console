@@ -27,18 +27,17 @@ You can use any built in C# data type
 
 * bool
 * byte
-* char
+* sbyte
 * decimal
 * double
 * float
 * int
+* uint
 * long
-* sbyte
-* short
-* uint
-* uint
 * ulong
+* short
 * ushort
+* char
 * string
 
 Example command with parameters
