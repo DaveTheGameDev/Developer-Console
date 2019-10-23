@@ -14,7 +14,7 @@ namespace DeveloperConsole.Tests
             ConsoleSystem.Initialize(new UnityConsole());
             // Use the Assert class to test conditions
             ConsoleSystem.ExecuteCommand("test");
-            ConsoleSystem.ExecuteCommand("test-args 1 0 999");
+            ConsoleSystem.ExecuteCommand("test-args 1 0 999 test");
         }
 
         [ConsoleCommand("test", "")]
@@ -24,10 +24,11 @@ namespace DeveloperConsole.Tests
         }
         
         [ConsoleCommand("test-args", "")]
-        private static void TestCommandArgs(bool testBool, bool testBool2, int testInt)
+        private static void TestCommandArgs(bool testBool, bool testBool2, int testInt, string testString)
         {
             Assert.IsTrue(testBool);
             Assert.IsFalse(testBool2);
+            Assert.AreEqual("test", testString);
             Assert.AreEqual(999, testInt);
             
             ConsoleSystem.Log($"testInt is {testInt}");
