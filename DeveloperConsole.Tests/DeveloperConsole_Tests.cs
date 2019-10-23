@@ -17,19 +17,20 @@ namespace DeveloperConsole.Tests
             ConsoleSystem.ExecuteCommand("test-args 1 0 999");
         }
 
-        [ConsoleCommand("test")]
+        [ConsoleCommand("test", "")]
         private static void TestCommand()
         {
             ConsoleSystem.Log("Test Command Ran");
         }
         
-        [ConsoleCommand("test-args")]
+        [ConsoleCommand("test-args", "")]
         private static void TestCommandArgs(bool testBool, bool testBool2, int testInt)
         {
             Assert.IsTrue(testBool);
             Assert.IsFalse(testBool2);
             Assert.AreEqual(999, testInt);
             
+            ConsoleSystem.Log($"testInt is {testInt}");
             ConsoleSystem.Log("Test Command Args Ran");
         }
 

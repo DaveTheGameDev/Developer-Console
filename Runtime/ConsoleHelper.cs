@@ -57,9 +57,12 @@ namespace Lyrebird.Debugging.Console
 		
 		public static bool TryParseBool(Type param, string input, out bool value)
 		{
-			value = false;
-			return param == BoolType && bool.TryParse(input, out value);
-		}
+			input = input.ToLower();
+			bool isValid = (input == "1" || input == "true" || input == "0" || input == "false");
+			
+			value = (input == "1" || input == "true");
+			return param == BoolType && isValid;
+		} 
 		
 		public static bool TryParseByte(Type param, string input, out byte value)
 		{
