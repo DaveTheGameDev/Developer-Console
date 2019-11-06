@@ -21,6 +21,10 @@ namespace Lyrebird.Debugging.Console
 		private static bool initialized;
 		private static IConsoleOutput consoleOutput;
 
+		private static Queue<string> preLogQueue;
+		private static Queue<string> preWarningQueue;
+		private static Queue<string> preErrorQueue;
+		
 		private static void RegisterCommands()
 		{
 			Log("<b><color=#86baf9><size=13>Initializing Console</size></color></b>");
@@ -70,6 +74,21 @@ namespace Lyrebird.Debugging.Console
 			consoleOutput = output;
 
 			RegisterCommands();
+
+			while (preLogQueue.Count > 0)
+			{
+				Log(preLogQueue.Dequeue());
+			}
+			
+			while (preWarningQueue.Count > 0)
+			{
+				Log(preWarningQueue.Dequeue());
+			}
+			
+			while (preErrorQueue.Count > 0)
+			{
+				Log(preErrorQueue.Dequeue());
+			}
 		}
 
 		/// <summary>
@@ -81,6 +100,10 @@ namespace Lyrebird.Debugging.Console
 			if (IsInitialised())
 			{
 				consoleOutput?.Log($"<b>[{DateTime.Now.ToShortTimeString()}]</b> {logMessage}");
+			}
+			else
+			{
+				preLogQueue.Enqueue(logMessage);
 			}
 		}
 
@@ -94,6 +117,10 @@ namespace Lyrebird.Debugging.Console
 			{
 				consoleOutput?.LogWarning($"<b>[{DateTime.Now.ToShortTimeString()}]</b> {warningMessage}");
 			}
+			else
+			{
+				preWarningQueue.Enqueue(warningMessage);
+			}
 		}
 
 		/// <summary>
@@ -105,6 +132,10 @@ namespace Lyrebird.Debugging.Console
 			if (IsInitialised())
 			{
 				consoleOutput?.LogError($"<b>[{DateTime.Now.ToShortTimeString()}]</b> {errorMessage}");
+			}
+			else
+			{
+				preErrorQueue.Enqueue(errorMessage);
 			}
 		}
 
@@ -266,12 +297,19 @@ namespace Lyrebird.Debugging.Console
 		/// <returns>Returns true if console is ready to be written to and false if not.(Also throws a unity log error if false)</returns>
 		public static bool IsInitialised()
 		{
+			if(preLogQueue == null)
+				preLogQueue = new Queue<string>();
+			
+			if(preWarningQueue == null)
+				preWarningQueue = new Queue<string>();
+			
+			if(preErrorQueue == null)
+				preErrorQueue = new Queue<string>();
+			
 			if (initialized && consoleOutput != null)
 			{
 				return true;
 			}
-
-			Debug.Log("ConsoleSystem has not been initialised.");
 			return false;
 		}
 
