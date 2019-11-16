@@ -24,6 +24,18 @@ namespace Lyrebird.Debugging.Console
 		private static Queue<string> preLogQueue;
 		private static Queue<string> preWarningQueue;
 		private static Queue<string> preErrorQueue;
+
+		[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+		private static void Init()
+		{
+			RegisteredCommands?.Clear();
+			ConsoleVisibilityChanged = null;
+			preLogQueue?.Clear();
+			preWarningQueue?.Clear();
+			preErrorQueue?.Clear();
+			initialized = false;
+			consoleOutput = null;
+		}
 		
 		private static void RegisterCommands()
 		{

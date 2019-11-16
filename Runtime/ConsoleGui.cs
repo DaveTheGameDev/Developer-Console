@@ -123,12 +123,13 @@ namespace Lyrebird.Debugging.Console
 
 		private void ToggleConsole()
 		{
-			canvas.enabled = !canvas.enabled;
-			IsOpen = canvas.enabled;
-			
+			IsOpen = !canvas.enabled;
+			canvas.enabled = IsOpen; 
+
 			inputField.DeactivateInputField(true);
-			Cursor.visible = canvas.enabled;
-			Cursor.lockState = canvas.enabled ? CursorLockMode.Confined : consoleSettings.cursorLockModeOnClose;
+
+			Cursor.visible = IsOpen || !consoleSettings.hideCursorOnClose;
+			Cursor.lockState = IsOpen ? CursorLockMode.Confined : consoleSettings.cursorLockModeOnClose;
 
 			if (canvas.enabled)
 			{
