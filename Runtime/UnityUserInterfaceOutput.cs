@@ -2,6 +2,7 @@
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 namespace Debugging.DeveloperConsole
 {
@@ -24,7 +25,8 @@ namespace Debugging.DeveloperConsole
         [SerializeField] private Color warningColor = Color.yellow;
         [SerializeField] private Color errorColor = Color.red;
         [SerializeField] private Color commandColor = Color.green;
-
+        [SerializeField] private ScrollRect scrollRect;
+        
         private List<TextFitter> elements = new List<TextFitter>();
         public bool IsOpen { get; set; }
         
@@ -187,6 +189,14 @@ namespace Debugging.DeveloperConsole
                 var newElement = Instantiate(element.gameObject, panel).GetComponent<TextFitter>();
                 newElement.SetText(message, 16, color);
                 elements.Add(newElement);
+            }
+            
+            Canvas.ForceUpdateCanvases();
+			
+            if (scrollRect != null)
+            {
+                scrollRect.verticalScrollbar.value = 1;
+                scrollRect.verticalNormalizedPosition = 0;
             }
         }
         

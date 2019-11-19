@@ -30,11 +30,11 @@ namespace Debugging.DeveloperConsole
 		{
 			StringBuilder builder = new StringBuilder("System Information \n");
 
-//			builder.AppendLine($"OS: {SystemInfo.operatingSystem}");
-//			builder.AppendLine($"Graphics: {SystemInfo.graphicsDeviceName} - {SystemInfo.graphicsDeviceVersion} - Shader Level {SystemInfo.graphicsShaderLevel}");
-//			builder.AppendLine($"CPU: {SystemInfo.processorType} - Cores {SystemInfo.processorCount}");
-//			builder.AppendLine($"VRAM: {SystemInfo.graphicsMemorySize}MB");
-//			builder.AppendLine($"RAM: {SystemInfo.systemMemorySize}MB");
+			builder.AppendLine($"OS: {SystemInfo.operatingSystem}");
+			builder.AppendLine($"Graphics: {SystemInfo.graphicsDeviceName} - {SystemInfo.graphicsDeviceVersion} - Shader Level {SystemInfo.graphicsShaderLevel}");
+			builder.AppendLine($"CPU: {SystemInfo.processorType} - Cores {SystemInfo.processorCount}");
+			builder.AppendLine($"VRAM: {SystemInfo.graphicsMemorySize}MB");
+			builder.AppendLine($"RAM: {SystemInfo.systemMemorySize}MB");
 
 			sysInfo = builder.ToString();
 		}
@@ -157,6 +157,9 @@ namespace Debugging.DeveloperConsole
 		[ConsoleCommand("quit", "quits the game")]
 		private static void Quit()
 		{
+			#if UNITY_EDITOR
+			UnityEditor.EditorApplication.isPlaying = false;
+			#endif
 			Application.Quit();
 		}
 		
@@ -166,7 +169,7 @@ namespace Debugging.DeveloperConsole
 			ConsoleSystem.Log(colorsMessage);
 		}
 		
-		[ConsoleCommand("sys-info", "prints system information")]
+		[ConsoleCommand("sys", "prints system information")]
 		private static void PrintSystemInfo()
 		{
 			ConsoleSystem.Log(sysInfo);

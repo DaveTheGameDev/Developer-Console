@@ -20,25 +20,24 @@ namespace Debugging.DeveloperConsole
 		private static bool initialized;
 		private static IConsoleOutput consoleOutput;
 
-		private static Queue<string> preLogQueue;
-		private static Queue<string> preWarningQueue;
-		private static Queue<string> preErrorQueue;
+		private static List<string> preLogQueue;
+		private static List<string> preWarningQueue;
+		private static List<string> preErrorQueue;
 
-//		[RuntimeInitializeOnLoadMethod]
-//		private static void Init()
-//		{
-//			RegisteredCommands?.Clear();
-//			ConsoleVisibilityChanged = null;
-//			preLogQueue?.Clear();
-//			preWarningQueue?.Clear();
-//			preErrorQueue?.Clear();
-//			initialized = false;
-//			consoleOutput = null;
-//		}
+		[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+		private static void Init()
+		{
+			RegisteredCommands?.Clear();
+			ConsoleVisibilityChanged = null;
+			preLogQueue?.Clear();
+			preWarningQueue?.Clear();
+			preErrorQueue?.Clear();
+			initialized = false;
+			consoleOutput = null;
+		}
 		
 		private static void RegisterCommands()
 		{
-			Log("Initializing Developer Console");
 			foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
 			{
 				foreach (var type in assembly.GetTypes())
@@ -72,7 +71,7 @@ namespace Debugging.DeveloperConsole
 
 			RegisteredCommands = RegisteredCommands.OrderBy(key => key.Key).ToDictionary(obj => obj.Key, obj => obj.Value);
 
-			Log($"Developer Console Initialized. {RegisteredCommands.Count} Commands Loaded");
+			Log($"Developer Console Initialized. {RegisteredCommands.Count} Commands Loaded.");
 		}
 
 		/// <summary>
@@ -86,19 +85,22 @@ namespace Debugging.DeveloperConsole
 
 			RegisterCommands();
 
-			while (preLogQueue.Count > 0)
+			for (var i = 0; i < preLogQueue.Count; i++)
 			{
-				Log(preLogQueue.Dequeue());
+				string log = preLogQueue[i];
+				Log(log);
 			}
-			
-			while (preWarningQueue.Count > 0)
+
+			for (var i = 0; i < preWarningQueue.Count; i++)
 			{
-				Log(preWarningQueue.Dequeue());
+				string warning = preWarningQueue[i];
+				Log(warning);
 			}
-			
-			while (preErrorQueue.Count > 0)
+
+			for (var i = 0; i < preErrorQueue.Count; i++)
 			{
-				Log(preErrorQueue.Dequeue());
+				string error = preErrorQueue[i];
+				Log(error);
 			}
 		}
 
@@ -114,7 +116,7 @@ namespace Debugging.DeveloperConsole
 			}
 			else
 			{
-				preLogQueue.Enqueue(logMessage);
+				preLogQueue.Add(logMessage);
 			}
 		}
 
@@ -130,7 +132,7 @@ namespace Debugging.DeveloperConsole
 			}
 			else
 			{
-				preWarningQueue.Enqueue(warningMessage);
+				preWarningQueue.Add(warningMessage);
 			}
 		}
 
@@ -146,7 +148,7 @@ namespace Debugging.DeveloperConsole
 			}
 			else
 			{
-				preErrorQueue.Enqueue(errorMessage);
+				preErrorQueue.Add(errorMessage);
 			}
 		}
 
@@ -309,13 +311,13 @@ namespace Debugging.DeveloperConsole
 		public static bool IsInitialised()
 		{
 			if(preLogQueue == null)
-				preLogQueue = new Queue<string>();
+				preLogQueue = new List<string>();
 			
 			if(preWarningQueue == null)
-				preWarningQueue = new Queue<string>();
+				preWarningQueue = new List<string>();
 			
 			if(preErrorQueue == null)
-				preErrorQueue = new Queue<string>();
+				preErrorQueue = new List<string>();
 			
 			if (initialized && consoleOutput != null)
 			{
