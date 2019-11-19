@@ -1,6 +1,7 @@
+using Debugging.DeveloperConsole;
 using UnityEngine;
 
-namespace Lyrebird.Debugging.Console
+namespace Debugging.Console
 {
 	public class DebugObjectSelector : MonoBehaviour
 	{

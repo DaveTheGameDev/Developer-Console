@@ -1,4 +1,4 @@
-﻿using Lyrebird.Debugging.Console;
+﻿using Debugging.DeveloperConsole;
 using UnityEngine;
 
 namespace DeveloperConsole.Tests

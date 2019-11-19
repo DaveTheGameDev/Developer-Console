@@ -1,11 +1,10 @@
-using System;
-using System.Collections;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using UnityEngine;
 
-namespace Lyrebird.Debugging.Console
+namespace Debugging.DeveloperConsole
 {
 	//TODO: Add string parsing for args "example arg"
 	/// <summary>
@@ -16,7 +15,7 @@ namespace Lyrebird.Debugging.Console
 	{
 		public static event Action<bool> ConsoleVisibilityChanged;
 		
-		internal static Dictionary<string, CommandData> RegisteredCommands = new Dictionary<string, CommandData>();
+		private static Dictionary<string, CommandData> RegisteredCommands = new Dictionary<string, CommandData>();
 		
 		private static bool initialized;
 		private static IConsoleOutput consoleOutput;
@@ -25,21 +24,21 @@ namespace Lyrebird.Debugging.Console
 		private static Queue<string> preWarningQueue;
 		private static Queue<string> preErrorQueue;
 
-		[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
-		private static void Init()
-		{
-			RegisteredCommands?.Clear();
-			ConsoleVisibilityChanged = null;
-			preLogQueue?.Clear();
-			preWarningQueue?.Clear();
-			preErrorQueue?.Clear();
-			initialized = false;
-			consoleOutput = null;
-		}
+//		[RuntimeInitializeOnLoadMethod]
+//		private static void Init()
+//		{
+//			RegisteredCommands?.Clear();
+//			ConsoleVisibilityChanged = null;
+//			preLogQueue?.Clear();
+//			preWarningQueue?.Clear();
+//			preErrorQueue?.Clear();
+//			initialized = false;
+//			consoleOutput = null;
+//		}
 		
 		private static void RegisterCommands()
 		{
-			Log("<b><color=#86baf9><size=13>Initializing Console</size></color></b>");
+			Log("Initializing Developer Console");
 			foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
 			{
 				foreach (var type in assembly.GetTypes())
@@ -73,7 +72,7 @@ namespace Lyrebird.Debugging.Console
 
 			RegisteredCommands = RegisteredCommands.OrderBy(key => key.Key).ToDictionary(obj => obj.Key, obj => obj.Value);
 
-			Log($"<b><color=#86baf9><size=13>Console Initialized. {RegisteredCommands.Count} Commands Loaded</size></color></b>");
+			Log($"Developer Console Initialized. {RegisteredCommands.Count} Commands Loaded");
 		}
 
 		/// <summary>
@@ -111,7 +110,7 @@ namespace Lyrebird.Debugging.Console
 		{
 			if (IsInitialised())
 			{
-				consoleOutput?.Log($"<b>[{DateTime.Now.ToShortTimeString()}]</b> {logMessage}");
+				consoleOutput?.Log($"{DateTime.Now.ToShortTimeString()}: {logMessage}");
 			}
 			else
 			{
@@ -127,7 +126,7 @@ namespace Lyrebird.Debugging.Console
 		{
 			if (IsInitialised())
 			{
-				consoleOutput?.LogWarning($"<b>[{DateTime.Now.ToShortTimeString()}]</b> {warningMessage}");
+				consoleOutput?.LogWarning($"{DateTime.Now.ToShortTimeString()}: {warningMessage}");
 			}
 			else
 			{
@@ -143,7 +142,7 @@ namespace Lyrebird.Debugging.Console
 		{
 			if (IsInitialised())
 			{
-				consoleOutput?.LogError($"<b>[{DateTime.Now.ToShortTimeString()}]</b> {errorMessage}");
+				consoleOutput?.LogError($"{DateTime.Now.ToShortTimeString()}:{errorMessage}");
 			}
 			else
 			{
@@ -325,6 +324,10 @@ namespace Lyrebird.Debugging.Console
 			return false;
 		}
 
+		public static CommandData[] GetCommands()
+		{
+			return RegisteredCommands.Values.ToArray();
+		}
 
 		public static bool IsOpen()
 		{

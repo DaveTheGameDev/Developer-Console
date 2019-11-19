@@ -1,9 +1,8 @@
-using System;
-using System.Linq;
+﻿using System;
 using System.Text;
 using UnityEngine;
 
-namespace Lyrebird.Debugging.Console
+namespace Debugging.DeveloperConsole
 {
 	public static class ConsoleHelper
 	{
@@ -23,38 +22,23 @@ namespace Lyrebird.Debugging.Console
 		private static readonly Type ShortType = typeof(short);
 		private static readonly Type UshortType = typeof(ushort);
 		private static readonly Type StringType = typeof(string);
-		private static readonly Type Vector3Type = typeof(Vector3);
-		private static readonly Type ColorType = typeof(Color);
-		internal static readonly Type GameObjectType = typeof(GameObject);
 		
-		private static string SysInfo;
+		private static string sysInfo;
 		
 		[RuntimeInitializeOnLoadMethod]
 		private static void GetSystemInfo()
 		{
 			StringBuilder builder = new StringBuilder("System Information \n");
 
-			builder.AppendLine($"OS: {SystemInfo.operatingSystem}");
-			builder.AppendLine($"Graphics: {SystemInfo.graphicsDeviceName} - {SystemInfo.graphicsDeviceVersion} - Shader Level {SystemInfo.graphicsShaderLevel}");
-			builder.AppendLine($"CPU: {SystemInfo.processorType} - Cores {SystemInfo.processorCount}");
-			builder.AppendLine($"VRAM: {SystemInfo.graphicsMemorySize}MB");
-			builder.AppendLine($"RAM: {SystemInfo.systemMemorySize}MB");
+//			builder.AppendLine($"OS: {SystemInfo.operatingSystem}");
+//			builder.AppendLine($"Graphics: {SystemInfo.graphicsDeviceName} - {SystemInfo.graphicsDeviceVersion} - Shader Level {SystemInfo.graphicsShaderLevel}");
+//			builder.AppendLine($"CPU: {SystemInfo.processorType} - Cores {SystemInfo.processorCount}");
+//			builder.AppendLine($"VRAM: {SystemInfo.graphicsMemorySize}MB");
+//			builder.AppendLine($"RAM: {SystemInfo.systemMemorySize}MB");
 
-			SysInfo = builder.ToString();
+			sysInfo = builder.ToString();
 		}
-		
-		public static bool TryParseGameObject(Type param, out GameObject value)
-		{
-			value = null;
-			
-			if (param != GameObjectType)
-			{
-				return false;
-			}
-			value = DebugObjectSelector.SelectedGameObject;
-			return value;
-		}
-		
+
 		public static bool TryParseBool(Type param, string input, out bool value)
 		{
 			input = input.ToLower();
@@ -136,118 +120,13 @@ namespace Lyrebird.Debugging.Console
 			return param == StringType;
 		}
 		
-		public static bool TryParseVector3(Type param, string input, out Vector3 vector3)
-		{
-			vector3 = default;
-
-			if (param != Vector3Type)
-			{
-				return false;
-			}
-			if (!input.Contains(","))
-			{
-				ConsoleSystem.LogError("Invalid syntax (Vector3)");
-				return false;
-			}
-			
-			var xyz = input.Split(',');
-
-			if (!float.TryParse(xyz[0], out float x))
-			{
-				ConsoleSystem.LogError("Invalid syntax (Vector3.x)");
-				return false;
-			}
-			
-			if (!float.TryParse(xyz[1], out float y))
-			{
-				ConsoleSystem.LogError("Invalid syntax (Vector3.y)");
-				return false;
-			}
-			
-			if (!float.TryParse(xyz[2], out float z))
-			{
-				ConsoleSystem.LogError("Invalid syntax (Vector3.z)");
-				return false;
-			}
-			
-			vector3 = new Vector3(x,y,z);
-			return true;
-		}
-
-		public static bool TryParseColor(Type param, string input, out Color color)
-		{
-			color = default;
-
-			if (param != ColorType)
-			{
-				return false;
-			}
-			
-			if (input.ToLower().Equals("red"))
-			{
-				color = Color.red;
-				return true;
-			}
-			if (input.ToLower().Equals("green"))
-			{
-				color = Color.green;
-				return true;
-			}
-			if (input.ToLower().Equals("blue"))
-			{
-				color = Color.blue;
-				return true;
-			}
-			if (input.ToLower().Equals("white"))
-			{
-				color = Color.white;
-				return true;
-			}
-			if (input.ToLower().Equals("black"))
-			{
-				color = Color.black;
-				return true;
-			}
-			if (input.ToLower().Equals("yellow"))
-			{
-				color = Color.yellow;
-				return true;
-			}
-			if (input.ToLower().Equals("cyan"))
-			{
-				color = Color.cyan;
-				return true;
-			}
-			if (input.ToLower().Equals("magenta"))
-			{
-				color = Color.magenta;
-				return true;
-			}
-			if (input.ToLower().Equals("gray"))
-			{
-				color = Color.gray;
-				return true;
-			}
-			if (input.ToLower().Equals("grey"))
-			{
-				color = Color.grey;
-				return true;
-			}
-
-			if(input.ToLower().Contains("#"))
-			{
-				return ColorUtility.TryParseHtmlString(input, out color);
-			}
-
-			return false;
-		}
 
 		[ConsoleCommand("help", "Prints out all commands and their descriptions")]
 		private static void Help()
 		{
 			StringBuilder builder = new StringBuilder("Available Commands \n");
 
-			foreach (var value in ConsoleSystem.RegisteredCommands.Values)
+			foreach (var value in ConsoleSystem.GetCommands())
 			{
 				string usage = string.IsNullOrWhiteSpace(value.Usage) ? "" : $"Usage = {value.Usage}";
 				builder.AppendLine($"{value.Name} - {value.Description}. {usage}");
@@ -278,11 +157,7 @@ namespace Lyrebird.Debugging.Console
 		[ConsoleCommand("quit", "quits the game")]
 		private static void Quit()
 		{
-#if UNITY_EDITOR
-			UnityEditor.EditorApplication.isPlaying = false;
-#else
 			Application.Quit();
-#endif
 		}
 		
 		[ConsoleCommand("print-colors", "prints preset color names")]
@@ -294,7 +169,7 @@ namespace Lyrebird.Debugging.Console
 		[ConsoleCommand("sys-info", "prints system information")]
 		private static void PrintSystemInfo()
 		{
-			ConsoleSystem.Log(SysInfo);
+			ConsoleSystem.Log(sysInfo);
 		}
 	}
 }

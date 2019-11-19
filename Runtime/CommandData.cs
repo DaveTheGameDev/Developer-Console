@@ -1,10 +1,9 @@
-using System;
+﻿using System;
 using System.Reflection;
-using UnityEngine;
 
-namespace Lyrebird.Debugging.Console
+namespace Debugging.DeveloperConsole
 {
-	internal struct CommandData
+	public struct CommandData
 	{
 		/// <summary>
 		/// The name of the command.
@@ -62,18 +61,6 @@ namespace Lyrebird.Debugging.Console
 			int nextArg = 0;
 			for (int i = 0; i < parameters.Length; i++)
 			{
-				// Check if this is a game object
-				if (parameters[i] == ConsoleHelper.GameObjectType)
-				{
-					//Since selected objects don't need to be passed in the command we grab it from the selector -
-					// and set next index to be i -1 (example command "setcolor red") red index = 1
-					
-					objectParams[i] = DebugObjectSelector.SelectedGameObject;
-					nextArg = i -1;
-					nextArg = Mathf.Max(nextArg, 0);
-					continue;
-				}
-
 				// Increase next arg index here to make sure indexing order does not go out of sync.
 				nextArg++;
 				
@@ -82,18 +69,6 @@ namespace Lyrebird.Debugging.Console
 				{
 					success = InformFailedParse(i, FailReason.NotEnoughArgs);
 					break;
-				}
-
-				if (ConsoleHelper.TryParseVector3(parameters[i], args[nextArg], out Vector3 vector3))
-				{
-					objectParams[i] = vector3;
-					continue;
-				}
-				
-				if (ConsoleHelper.TryParseColor(parameters[i], args[nextArg], out Color color))
-				{
-					objectParams[i] = color;
-					continue;
 				}
 
 				if (ConsoleHelper.TryParseBool(parameters[i], args[nextArg], out bool boolean))
