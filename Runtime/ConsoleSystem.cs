@@ -15,7 +15,7 @@ namespace Debugging.DeveloperConsole
 	{
 		public static event Action<bool> ConsoleVisibilityChanged;
 		
-		private static Dictionary<string, CommandData> RegisteredCommands = new Dictionary<string, CommandData>();
+		private static Dictionary<string, CommandData> registeredCommands = new Dictionary<string, CommandData>();
 		
 		private static bool initialized;
 		private static IConsoleOutput consoleOutput;
@@ -27,7 +27,7 @@ namespace Debugging.DeveloperConsole
 		[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
 		private static void Init()
 		{
-			RegisteredCommands?.Clear();
+			registeredCommands?.Clear();
 			ConsoleVisibilityChanged = null;
 			preLogQueue?.Clear();
 			preWarningQueue?.Clear();
@@ -69,9 +69,7 @@ namespace Debugging.DeveloperConsole
 				}
 			}
 
-			RegisteredCommands = RegisteredCommands.OrderBy(key => key.Key).ToDictionary(obj => obj.Key, obj => obj.Value);
-
-			Log($"Developer Console Initialized. {RegisteredCommands.Count} Commands Loaded.");
+			registeredCommands = registeredCommands.OrderBy(key => key.Key).ToDictionary(obj => obj.Key, obj => obj.Value);
 		}
 
 		/// <summary>
@@ -210,9 +208,9 @@ namespace Debugging.DeveloperConsole
 			consoleOutput?.LogCommand(command);
 
 			// Invoke command listener if it exists
-			if (RegisteredCommands.ContainsKey(commandName))
+			if (registeredCommands.ContainsKey(commandName))
 			{
-				RegisteredCommands[commandName].Invoke(args);
+				registeredCommands[commandName].Invoke(args);
 				return;
 			}
 
@@ -230,13 +228,13 @@ namespace Debugging.DeveloperConsole
 		{
 			var data = new CommandData(name, description, usage, parameters, methodInfo);
 
-			if (RegisteredCommands.ContainsKey(name.ToLower()))
+			if (registeredCommands.ContainsKey(name.ToLower()))
 			{
 				LogError($"A command with name {name.ToLower()} already exists");
 				return;
 			}
 
-			RegisteredCommands.Add(name, data);
+			registeredCommands.Add(name, data);
 		}
 
 		private static string[] ParseCommand(string commandInput)
@@ -328,7 +326,7 @@ namespace Debugging.DeveloperConsole
 
 		public static CommandData[] GetCommands()
 		{
-			return RegisteredCommands.Values.ToArray();
+			return registeredCommands.Values.ToArray();
 		}
 
 		public static bool IsOpen()

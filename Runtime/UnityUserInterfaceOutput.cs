@@ -20,12 +20,13 @@ namespace Debugging.DeveloperConsole
         [SerializeField] private TMP_InputField inputField;
         [SerializeField] private Transform panel;
         [SerializeField] private TextFitter element;
+        [SerializeField] private ScrollRect scrollRect;
         [SerializeField] private string commandPrefix = ">";
         [SerializeField] private Color logColor = Color.white;
         [SerializeField] private Color warningColor = Color.yellow;
         [SerializeField] private Color errorColor = Color.red;
         [SerializeField] private Color commandColor = Color.green;
-        [SerializeField] private ScrollRect scrollRect;
+       
         
         private List<TextFitter> elements = new List<TextFitter>();
         public bool IsOpen { get; set; }
@@ -34,7 +35,9 @@ namespace Debugging.DeveloperConsole
         {
             element.SetText("", 16, logColor);
             IsOpen = openOnStart;
-            ConsoleSystem.Initialize(this);
+            
+            if(!ConsoleSystem.IsInitialised())
+                ConsoleSystem.Initialize(this);
 
             if (showUnityLogs)
             {
@@ -45,7 +48,6 @@ namespace Debugging.DeveloperConsole
             {
                 inputField.onSubmit.AddListener((text) =>
                 {
-                    //inputField.DeactivateInputField(true);
                     SelectInputField();
                     ExecuteCommand(text);
                 });
@@ -179,7 +181,7 @@ namespace Debugging.DeveloperConsole
                     break;
             }
 
-            if (elements.Count == 1)
+            if (elements.Count < 1)
             {
                 element.SetText(message, 16, color);
                 elements.Add(element);
@@ -219,13 +221,12 @@ namespace Debugging.DeveloperConsole
 
         public void Clear()
         {
-            for (int i = panel.childCount - 1; i >= 1; i--)
+            for (int i = elements.Count - 1; i >= 1; i--)
             {
-                Destroy(panel.GetChild(i).gameObject);
+                Destroy(elements[i].gameObject);
             }
             
             elements?.Clear();
-            elements?.Add(element);
             element.SetText("", 16, logColor);
         }
 
