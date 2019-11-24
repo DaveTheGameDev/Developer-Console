@@ -1,6 +1,7 @@
 # Developer Console
 
-I made this system to handle executing commands via a console GUI from unity.
+I made this system to handle executing commands for C# games.
+This project has been setup as a unity package but can be used in any C# project.	
 
 If you use this in your project hit me up on [twitter](https://twitter.com/ReignOfDave) or [linked in](https://www.linkedin.com/in/david-conway-gamedev/).
 
@@ -50,14 +51,6 @@ private static void Add(int a, int b)
 }
 ```
 
-## Unity types  
-Right now only Color, Vector3 and GameObject are supported.
-Soon all unity types will be supported.
-		
-
-
 # known Issues / Limitations
-
-* Not all unity types are supported yet. 
 * Docs for adding new types as parameters do not exist yet. To add new commands you can take a look at ConsoleHelper.cs
 
