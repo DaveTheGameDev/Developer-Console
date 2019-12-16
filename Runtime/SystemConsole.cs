@@ -5,6 +5,8 @@ namespace Debugging.DeveloperConsole
     public class SystemConsole : IConsoleOutput
     {
         public bool IsOpen { get; set; } = true;
+        public bool LogToFile { get; set; }
+
         public void Log(string logMessage)
         {
             System.Console.WriteLine(logMessage);

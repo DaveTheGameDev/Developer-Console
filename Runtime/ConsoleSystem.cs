@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using UnityEngine;
@@ -100,6 +101,16 @@ namespace Debugging.DeveloperConsole
 				string error = preErrorQueue[i];
 				Log(error);
 			}
+
+			if (consoleOutput?.LogToFile == true)
+			{
+				var path = Path.Combine(Directory.GetParent(Application.dataPath).FullName, "Logs");
+				if (!Directory.Exists(path))
+				{
+					Directory.CreateDirectory(path);
+				}
+			}
+			
 		}
 
 		/// <summary>
@@ -108,13 +119,23 @@ namespace Debugging.DeveloperConsole
 		/// <param name="logMessage"></param>
 		public static void Log(string logMessage)
 		{
+			string message = $"[LOG] {DateTime.Now.ToShortTimeString()}: {logMessage}";
 			if (IsInitialised())
 			{
-				consoleOutput?.Log($"{DateTime.Now.ToShortTimeString()}: {logMessage}");
+				consoleOutput?.Log(message);
 			}
 			else
 			{
 				preLogQueue.Add(logMessage);
+			}
+			
+			if (consoleOutput != null && consoleOutput.LogToFile)
+			{
+				using (var file = File.AppendText(
+					Path.Combine(Directory.GetParent(Application.dataPath).FullName, "Logs/output.log")))
+				{
+					file.WriteLineAsync(message);
+				}
 			}
 		}
 
@@ -124,13 +145,23 @@ namespace Debugging.DeveloperConsole
 		/// <param name="warningMessage"></param>
 		public static void LogWarning(string warningMessage)
 		{
+			string message = $"[WARNING] {DateTime.Now.ToShortTimeString()}: {warningMessage}";
 			if (IsInitialised())
 			{
-				consoleOutput?.LogWarning($"{DateTime.Now.ToShortTimeString()}: {warningMessage}");
+				consoleOutput?.LogWarning(message);
 			}
 			else
 			{
 				preWarningQueue.Add(warningMessage);
+			}
+
+			if (consoleOutput != null && consoleOutput.LogToFile)
+			{
+				using (var file = File.AppendText(
+					Path.Combine(Directory.GetParent(Application.dataPath).FullName, "Logs/output.log")))
+				{
+					file.WriteLineAsync(message);
+				}
 			}
 		}
 
@@ -140,13 +171,23 @@ namespace Debugging.DeveloperConsole
 		/// <param name="errorMessage"></param>
 		public static void LogError(string errorMessage)
 		{
+			string message = $"[ERROR] {DateTime.Now.ToShortTimeString()}: {errorMessage}";
 			if (IsInitialised())
 			{
-				consoleOutput?.LogError($"{DateTime.Now.ToShortTimeString()}:{errorMessage}");
+				consoleOutput?.LogError(message);
 			}
 			else
 			{
 				preErrorQueue.Add(errorMessage);
+			}
+			
+			if (consoleOutput != null && consoleOutput.LogToFile)
+			{
+				using (var file = File.AppendText(
+					Path.Combine(Directory.GetParent(Application.dataPath).FullName, "Logs/output.log")))
+				{
+					file.WriteLineAsync(message);
+				}
 			}
 		}
 

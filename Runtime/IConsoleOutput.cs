@@ -6,6 +6,7 @@
     public interface IConsoleOutput
     {
         bool IsOpen { get; set; }
+        bool LogToFile { get; set; }
 		
         /// <summary>
         /// Writes a message to the console.

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -8,7 +9,8 @@ namespace Debugging.DeveloperConsole
 {
     public class UnityUserInterfaceOutput : MonoBehaviour, IConsoleOutput
     {
-       
+        private static UnityUserInterfaceOutput instance;
+        
         [SerializeField] private bool openOnStart;
     
         [SerializeField] private bool logToUnityConsole;
@@ -26,15 +28,27 @@ namespace Debugging.DeveloperConsole
         [SerializeField] private Color warningColor = Color.yellow;
         [SerializeField] private Color errorColor = Color.red;
         [SerializeField] private Color commandColor = Color.green;
+        [SerializeField] private int maxLogs = 50;
        
         
         private List<TextFitter> elements = new List<TextFitter>();
         public bool IsOpen { get; set; }
-        
+        public bool LogToFile { get; set; }
+
         private void Awake()
         {
+            if (instance)
+            {
+                Destroy(gameObject.transform.root.gameObject);
+                return;
+            }
+
+            instance = this;
+            
+            DontDestroyOnLoad(transform.root.gameObject);
             element.SetText("", 16, logColor);
             IsOpen = openOnStart;
+            LogToFile = logToFile;
             
             if(!ConsoleSystem.IsInitialised())
                 ConsoleSystem.Initialize(this);
@@ -75,20 +89,32 @@ namespace Debugging.DeveloperConsole
 
         private void ApplicationOnLogMessageReceived(string condition, string stacktrace, LogType type)
         {
+            string message = condition;
             switch (type)
             {
                 case LogType.Error:
-                    ConsoleSystem.LogError($"{condition}\n{stacktrace}");
+                    message = $"{condition}\n{stacktrace}";
+                    ConsoleSystem.LogError(message);
                     break;
                 case LogType.Warning:
-                    ConsoleSystem.LogWarning(condition);
+                    ConsoleSystem.LogWarning(message);
                     break;
                 case LogType.Log:
-                    ConsoleSystem.Log(condition);
+                    ConsoleSystem.Log(message);
                     break;
                 case LogType.Exception:
-                    ConsoleSystem.LogError($"{condition}\n{stacktrace}");
+                    message = $"{condition}\n{stacktrace}";
+                    ConsoleSystem.LogError(message);
                     break;
+            }
+            
+            if (LogToFile)
+            {
+                using (var file = File.AppendText(
+                    Path.Combine(Directory.GetParent(Application.dataPath).FullName, "Logs/output.log")))
+                {
+                    file.WriteLineAsync(message);
+                }
             }
         }
 
@@ -186,11 +212,19 @@ namespace Debugging.DeveloperConsole
                 element.SetText(message, 16, color);
                 elements.Add(element);
             }
-            else
+            else if(elements.Count < maxLogs)
             {
                 var newElement = Instantiate(element.gameObject, panel).GetComponent<TextFitter>();
                 newElement.SetText(message, 16, color);
                 elements.Add(newElement);
+            }
+            else
+            {
+                var newElement = elements[0];
+                newElement.SetText(message, 16, color);
+                elements.Remove(newElement);
+                elements.Add(newElement);
+                newElement.transform.SetAsLastSibling();
             }
             
             Canvas.ForceUpdateCanvases();
