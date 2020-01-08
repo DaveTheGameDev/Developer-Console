@@ -16,7 +16,7 @@ With static methods you can have your commands self contained in a single static
 // Commands can have multiple command aliases
 [ConsoleCommand("clear", description: "clears the console window")]
 [ConsoleCommand("cls", "clears the console window")]
-[ConsoleUsage("Explain how to use this command and what it does here")]
+[CommandUsage("Explain how to use this command and what it does here")]
 private static void Clear()
 {
     ConsoleSystem.Clear();
