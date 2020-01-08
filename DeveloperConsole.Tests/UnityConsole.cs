@@ -6,7 +6,8 @@ namespace DeveloperConsole.Tests
     public class UnityConsole : IConsoleOutput
     {
         public bool IsOpen { get; set; } = true;
-        
+        public bool LogToFile { get; set; }
+
         public void Log(string logMessage)
         {
             Debug.Log(logMessage);
