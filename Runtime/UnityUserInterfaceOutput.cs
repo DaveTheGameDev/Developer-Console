@@ -126,7 +126,7 @@ namespace Debugging.DeveloperConsole
 
         private void Update()
         {
-            if (Input.GetKeyDown(KeyCode.BackQuote))
+            if (Input.GetKeyDown(KeyCode.BackQuote) || Input.GetKeyDown(KeyCode.F3))
             {
                 ToggleConsole();
             }
@@ -189,6 +189,7 @@ namespace Debugging.DeveloperConsole
 
         private void CreateText(string message, LogLevel logLevel)
         {
+            
             Color color = Color.white;
 
             switch (logLevel)

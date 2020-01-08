@@ -129,13 +129,21 @@ namespace Debugging.DeveloperConsole
 				preLogQueue.Add(logMessage);
 			}
 			
-			if (consoleOutput != null && consoleOutput.LogToFile)
+			try
 			{
-				using (var file = File.AppendText(
-					Path.Combine(Directory.GetParent(Application.dataPath).FullName, "Logs/output.log")))
+				if (consoleOutput != null && consoleOutput.LogToFile)
 				{
-					file.WriteLineAsync(message);
+					using (var file = File.AppendText(
+						Path.Combine(Directory.GetParent(Application.dataPath).FullName, "Logs/output.log")))
+					{
+						file.WriteLineAsync(message);
+					}
 				}
+			}
+			catch (Exception e)
+			{
+				Debug.LogException(e);
+				throw;
 			}
 		}
 
@@ -155,13 +163,21 @@ namespace Debugging.DeveloperConsole
 				preWarningQueue.Add(warningMessage);
 			}
 
-			if (consoleOutput != null && consoleOutput.LogToFile)
+			try
 			{
-				using (var file = File.AppendText(
-					Path.Combine(Directory.GetParent(Application.dataPath).FullName, "Logs/output.log")))
+				if (consoleOutput != null && consoleOutput.LogToFile)
 				{
-					file.WriteLineAsync(message);
+					using (var file = File.AppendText(
+						Path.Combine(Directory.GetParent(Application.dataPath).FullName, "Logs/output.log")))
+					{
+						file.WriteLineAsync(message);
+					}
 				}
+			}
+			catch (Exception e)
+			{
+				Debug.LogException(e);
+				throw;
 			}
 		}
 
@@ -180,15 +196,24 @@ namespace Debugging.DeveloperConsole
 			{
 				preErrorQueue.Add(errorMessage);
 			}
-			
-			if (consoleOutput != null && consoleOutput.LogToFile)
+
+			try
 			{
-				using (var file = File.AppendText(
-					Path.Combine(Directory.GetParent(Application.dataPath).FullName, "Logs/output.log")))
+				if (consoleOutput != null && consoleOutput.LogToFile)
 				{
-					file.WriteLineAsync(message);
+					using (var file = File.AppendText(
+						Path.Combine(Directory.GetParent(Application.dataPath).FullName, "Logs/output.log")))
+					{
+						file.WriteLineAsync(message);
+					}
 				}
 			}
+			catch (Exception e)
+			{
+				Debug.LogException(e);
+				throw;
+			}
+			
 		}
 
 		/// <summary>
