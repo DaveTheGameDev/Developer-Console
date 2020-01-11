@@ -257,7 +257,7 @@ namespace Debugging.DeveloperConsole
 		/// Execute a console command write output to the console.
 		/// </summary>
 		/// <param name="command"></param>
-		public static void ExecuteCommand(string command)
+		public static void ExecuteCommand(string command, bool showInConsole = true)
 		{
 			if (!IsInitialised())
 			{
@@ -271,7 +271,8 @@ namespace Debugging.DeveloperConsole
 			string commandName = args[0];
 
 			// Show user their input in the console
-			consoleOutput?.LogCommand(command);
+			if(showInConsole)
+				consoleOutput?.LogCommand(command);
 
 			// Invoke command listener if it exists
 			if (registeredCommands.ContainsKey(commandName))
@@ -281,7 +282,8 @@ namespace Debugging.DeveloperConsole
 			}
 
 			// We failed to run command! Let the user know.
-			LogError("Invalid Command");
+			if(showInConsole)
+				LogError("Invalid Command");
 		}
 
 		/// <summary>
