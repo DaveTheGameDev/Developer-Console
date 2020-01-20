@@ -5,7 +5,7 @@ using System.Linq;
 using System.Reflection;
 using UnityEngine;
 
-namespace Debugging.DeveloperConsole
+namespace DeveloperConsole
 {
 	//TODO: Add string parsing for args "example arg"
 	/// <summary>
@@ -18,6 +18,11 @@ namespace Debugging.DeveloperConsole
 		
 		private static Dictionary<string, CommandData> registeredCommands = new Dictionary<string, CommandData>();
 		
+		public static Dictionary<string, ConVar<string>> registeredStringConVars = new Dictionary<string, ConVar<string>>();
+		public static Dictionary<string, ConVar<int>> registeredIntConVars       = new Dictionary<string, ConVar<int>>();
+		public static Dictionary<string, ConVar<float>> registeredFloatConVars   = new Dictionary<string, ConVar<float>>();
+		public static Dictionary<string, ConVar<bool>> registeredBoolConVars     = new Dictionary<string, ConVar<bool>>();
+		
 		private static bool initialized;
 		private static IConsoleOutput consoleOutput;
 
@@ -29,6 +34,10 @@ namespace Debugging.DeveloperConsole
 		private static void Init()
 		{
 			registeredCommands?.Clear();
+			registeredStringConVars?.Clear();
+			registeredIntConVars?.Clear();
+			registeredFloatConVars?.Clear();
+			registeredBoolConVars?.Clear();
 			ConsoleVisibilityChanged = null;
 			preLogQueue?.Clear();
 			preWarningQueue?.Clear();
@@ -279,6 +288,59 @@ namespace Debugging.DeveloperConsole
 			{
 				registeredCommands[commandName].Invoke(args);
 				return;
+			}
+			
+			
+			if (registeredStringConVars.ContainsKey(commandName))
+			{
+				if (args.Length == 1)
+				{
+					registeredStringConVars[commandName].Print();
+					return;
+				}
+				registeredStringConVars[commandName].StringValue = args[1];
+			}
+			else if (registeredIntConVars.ContainsKey(commandName))
+			{
+				if (args.Length == 1)
+				{
+					registeredIntConVars[commandName].Print();
+					return;
+				}
+				
+				if (ConsoleHelper.TryParseInt(typeof(int), args[1], out int value))
+				{
+					registeredIntConVars[commandName].IntValue = value;
+					return;
+				}
+			}
+			else if (registeredFloatConVars.ContainsKey(commandName))
+			{
+				if (args.Length == 1)
+				{
+					registeredFloatConVars[commandName].Print();
+					return;
+				}
+				
+				if (ConsoleHelper.TryParseFloat(typeof(float), args[1], out float value))
+				{
+					registeredFloatConVars[commandName].FloatValue = value;
+					return;
+				}
+			}
+			else if (registeredBoolConVars.ContainsKey(commandName))
+			{
+				if (args.Length == 1)
+				{
+					registeredBoolConVars[commandName].Print();
+					return;
+				}
+				
+				if (ConsoleHelper.TryParseBool(typeof(bool), args[1], out bool boolean))
+				{
+					registeredBoolConVars[commandName].BoolValue = boolean;
+					return;
+				}
 			}
 
 			// We failed to run command! Let the user know.

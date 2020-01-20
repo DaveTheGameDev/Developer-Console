@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Reflection;
 
-namespace Debugging.DeveloperConsole
+namespace DeveloperConsole
 {
 	public struct CommandData
 	{

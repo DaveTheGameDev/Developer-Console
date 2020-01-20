@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Lyrebird.Debugging.Console
+namespace DeveloperConsole
 {
 	[CreateAssetMenu(fileName = "ConsoleSettings", menuName = "Lyrebird/Console Settings", order = 0)]
 	public class ConsoleSettings : ScriptableObject

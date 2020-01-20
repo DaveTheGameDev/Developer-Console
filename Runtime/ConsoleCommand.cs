@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Debugging.DeveloperConsole
+namespace DeveloperConsole
 {
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
     public class ConsoleCommand : Attribute

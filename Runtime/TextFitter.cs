@@ -1,8 +1,7 @@
-﻿using System;
-using TMPro;
+﻿using TMPro;
 using UnityEngine;
 
-namespace Debugging.DeveloperConsole
+namespace DeveloperConsole
 {
     [RequireComponent(typeof(TextMeshProUGUI))]
     public class TextFitter : MonoBehaviour

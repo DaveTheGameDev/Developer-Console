@@ -2,7 +2,7 @@
 using System.Text;
 using UnityEngine;
 
-namespace Debugging.DeveloperConsole
+namespace DeveloperConsole
 {
 	public static class ConsoleHelper
 	{

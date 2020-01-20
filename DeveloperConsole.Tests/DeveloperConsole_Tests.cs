@@ -1,6 +1,4 @@
 ﻿using System.Collections;
-using Debugging.DeveloperConsole;
-using Lyrebird.Debugging.Console;
 using NUnit.Framework;
 using UnityEngine.TestTools;
 

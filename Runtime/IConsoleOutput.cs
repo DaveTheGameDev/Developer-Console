@@ -1,4 +1,4 @@
-﻿namespace Debugging.DeveloperConsole
+﻿namespace DeveloperConsole
 {
     /// <summary>
     /// Used to route messages to a console GUI.

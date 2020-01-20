@@ -1,5 +1,4 @@
-﻿using Debugging.DeveloperConsole;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace DeveloperConsole.Tests
 {

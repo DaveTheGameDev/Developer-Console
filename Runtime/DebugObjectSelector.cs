@@ -1,7 +1,6 @@
-using Debugging.DeveloperConsole;
 using UnityEngine;
 
-namespace Debugging.Console
+namespace DeveloperConsole
 {
 	public class DebugObjectSelector : MonoBehaviour
 	{

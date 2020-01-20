@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-namespace Debugging.DeveloperConsole
+namespace DeveloperConsole
 {
     public class UnityUserInterfaceOutput : MonoBehaviour, IConsoleOutput
     {

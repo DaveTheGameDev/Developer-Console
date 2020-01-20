@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Debugging.DeveloperConsole
+namespace DeveloperConsole
 {
     public class SystemConsole : IConsoleOutput
     {
