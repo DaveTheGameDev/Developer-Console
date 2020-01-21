@@ -6,7 +6,9 @@ This project has been setup as a unity package but can be used in any C# project
 Add this to your unity project through the package manifest
 "https://github.com/DaveTheGameDev/Developer-Console.git#upm",
 
-If you use this in your project hit me up on [twitter](https://twitter.com/ReignOfDave) or [linked in](https://www.linkedin.com/in/david-conway-gamedev/).
+If you use this in your project hit me up on [twitter](https://twitter.com/ReignOfDave)
+
+![Show Case](/images/showcase.JPG)
 
 If you find a bug or have a suggestion feel free to open an issue or a create a pull request
 ## Example Usage
