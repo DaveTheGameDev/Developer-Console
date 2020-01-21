@@ -8,9 +8,7 @@ If you use this in your project hit me up on [twitter](https://twitter.com/Reign
 If you find a bug or have a suggestion feel free to open an issue or a create a pull request
 ## Example Usage
 
-Commands must be static methods. The reason i designed it to not support non static methods is because i felt as though it would lead to spaghetti code.
-
-With static methods you can have your commands self contained in a single static class that accesses managers.
+Commands must be static methods. The reason i designed it to not support non static methods is because i felt as though it would lead to spaghetti code if you have random commands thrown into gameplay code.With static methods you can have your commands self contained in a single static class that accesses managers for specific gameplay objects.
 
 ```cs
 // Commands can have multiple command aliases
