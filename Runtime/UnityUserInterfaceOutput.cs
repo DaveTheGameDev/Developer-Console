@@ -20,7 +20,7 @@ namespace DeveloperConsole
         [SerializeField]  private CursorLockMode cursorLockModeOnClose;
         [SerializeField] private EventSystem eventSystem;
         [SerializeField] private Canvas canvas;
-        [SerializeField] private InputField inputField;
+        [SerializeField] private TMP_InputField inputField;
         [SerializeField] private Transform panel;
         [SerializeField] private TextFitter element;
         [SerializeField] private ScrollRect scrollRect;
@@ -64,7 +64,7 @@ namespace DeveloperConsole
 
             if (inputField)
             {
-                inputField.onEndEdit.AddListener((text) =>
+                inputField.onSubmit.AddListener((text) =>
                 {
                     SelectInputField();
                     ExecuteCommand(text);
