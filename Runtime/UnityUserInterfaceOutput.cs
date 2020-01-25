@@ -18,8 +18,9 @@ namespace DeveloperConsole
         [SerializeField] private bool logToFile;
         [SerializeField] private bool hideCursorOnClose;
         [SerializeField]  private CursorLockMode cursorLockModeOnClose;
+        [SerializeField] private EventSystem eventSystem;
         [SerializeField] private Canvas canvas;
-        [SerializeField] private TMP_InputField inputField;
+        [SerializeField] private InputField inputField;
         [SerializeField] private Transform panel;
         [SerializeField] private TextFitter element;
         [SerializeField] private ScrollRect scrollRect;
@@ -32,6 +33,9 @@ namespace DeveloperConsole
        
         
         private List<TextFitter> elements = new List<TextFitter>();
+        private List<string> history = new List<string>();
+        private int historyIndex = -1;
+        
         public bool IsOpen { get; set; }
         public bool LogToFile { get; set; }
 
@@ -42,9 +46,9 @@ namespace DeveloperConsole
                 Destroy(gameObject.transform.root.gameObject);
                 return;
             }
-
             instance = this;
             
+            historyIndex = -1;
             DontDestroyOnLoad(transform.root.gameObject);
             element.SetText("", 16, logColor);
             IsOpen = openOnStart;
@@ -60,7 +64,7 @@ namespace DeveloperConsole
 
             if (inputField)
             {
-                inputField.onSubmit.AddListener((text) =>
+                inputField.onEndEdit.AddListener((text) =>
                 {
                     SelectInputField();
                     ExecuteCommand(text);
@@ -130,8 +134,37 @@ namespace DeveloperConsole
             {
                 ToggleConsole();
             }
+
+            if (Input.GetKeyDown(KeyCode.UpArrow))
+            {
+                // Prevents overlap to start of history.
+                if (historyIndex < history.Count - 1)
+                    historyIndex += 1;
+                else
+                    return;
+                
+                ApplyHistory();
+                return;
+            }
+            
+            if (Input.GetKeyDown(KeyCode.DownArrow) && historyIndex > 0)
+            {
+                historyIndex -= 1;
+                ApplyHistory();
+                return;
+            }
+
+            if (Input.anyKeyDown)
+            {
+                historyIndex = -1;
+            }
         }
 
+        private void ApplyHistory()
+        {
+            inputField.text = history[historyIndex];
+        }
+        
         private void ToggleConsole()
         {
             IsOpen = !IsOpen;
@@ -149,7 +182,8 @@ namespace DeveloperConsole
             }
             else
             {
-                inputField.DeactivateInputField(true);
+                inputField.DeactivateInputField();
+                inputField.text = null;
                 ConsoleSystem.ConsoleClosed();
             }
         }
@@ -183,6 +217,13 @@ namespace DeveloperConsole
             if(logToUnityConsole)
                 Debug.Log(message);
 
+            history.Add(message);
+            
+            if(history.Count == maxLogs)
+                history.RemoveAt(history.Count -1);
+
+            historyIndex = -1;
+            
             CreateText(commandPrefix + message, LogLevel.Command);
         }
 
@@ -249,7 +290,7 @@ namespace DeveloperConsole
                 return;
             }
 			
-            EventSystem.current.SetSelectedGameObject(inputField.gameObject, null);
+            eventSystem.SetSelectedGameObject(inputField.gameObject, null);
             inputField.OnSelect(null);
             inputField.text = null;
         }
