@@ -182,7 +182,6 @@ namespace DeveloperConsole
             }
             else
             {
-                inputField.DeactivateInputField();
                 inputField.text = null;
                 eventSystem.SetSelectedGameObject(null);
                 ConsoleSystem.ConsoleClosed();
@@ -269,9 +268,7 @@ namespace DeveloperConsole
                 elements.Add(newElement);
                 newElement.transform.SetAsLastSibling();
             }
-#if UNITY_2019
             Canvas.ForceUpdateCanvases();
-#endif
             if (scrollRect != null)
             {
                 scrollRect.verticalScrollbar.value = 1;
