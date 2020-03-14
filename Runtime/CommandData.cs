@@ -1,65 +1,39 @@
 ﻿using System;
 using System.Reflection;
+using Cysharp.Text;
+using UnityEngine;
 
-namespace DeveloperConsole
+namespace Debugging.DeveloperConsole
 {
 	public struct CommandData
 	{
-		/// <summary>
-		/// The name of the command.
-		/// </summary>
-		public readonly string Name;
-		
-		/// <summary>
-		/// The commands description.
-		/// This should contain information on what the command does.
-		/// </summary>
+		public readonly string[] Aliases;
 		public readonly string Description;
-		
-		/// <summary>
-		/// The commands usage.
-		/// This should contain information on how to use it.
-		/// </summary>
-		public readonly string Usage;
-		
-		/// <summary>
-		/// A read only array of types for this command. Used to help parse user input args for method info.
-		/// </summary>
-		private readonly Type[] parameters;
-		
-		/// <summary>
-		/// Method info for this command. Method info should be a static method.
-		/// </summary>
-		private readonly MethodInfo methodInfo;
-		
-		public CommandData(string name, string description, string usage, Type[] parameters, MethodInfo methodInfo)
+		public readonly Type[] Parameters;
+		public readonly MethodInfo MethodInfo;
+
+		public CommandData(string[] aliases, string description, Type[] parameters, MethodInfo methodInfo)
 		{
-			Name = name.ToLower();
+			Aliases = aliases;
 			Description = description;
-			Usage = usage;
-			this.parameters = parameters;
-			this.methodInfo = methodInfo;
-			
+			Parameters = parameters;
+			MethodInfo = methodInfo;
 		}
 
-		/// <summary>
-		/// Parses command args 
-		/// </summary>
-		/// <param name="args"></param>
-		public void Invoke(string[] args)
+		public void Execute(string[] args)
 		{
 			bool success = true;
-
-			if (parameters == null || parameters.Length == 0)
+			
+			if (Parameters == null || Parameters.Length == 0)
 			{
-				methodInfo.Invoke(null, null);
+				MethodInfo.Invoke(null, null);
 				return;
 			}
 			
-			object[] objectParams = new object[parameters.Length];
+			object[] objectParams = new object[Parameters.Length];
 
 			int nextArg = 0;
-			for (int i = 0; i < parameters.Length; i++)
+			for (int i = 0; i < Parameters.Length; i++)
 			{
 				// Increase next arg index here to make sure indexing order does not go out of sync.
 				nextArg++;
@@ -71,85 +45,89 @@ namespace DeveloperConsole
 					break;
 				}
 
-				if (ConsoleHelper.TryParseBool(parameters[i], args[nextArg], out bool boolean))
+				if (ConsoleHelper.TryParseBool(Parameters[i], args[nextArg], out var boolValue))
 				{
-					objectParams[i] = boolean;
+					objectParams[i] = boolValue;
 					continue;
 				}
 
-				if (ConsoleHelper.TryParseByte(parameters[i], args[nextArg], out byte byteVal))
+				if (ConsoleHelper.TryParseByte(Parameters[i], args[nextArg], out var byteValue))
 				{
-					objectParams[i] = byteVal;
+					objectParams[i] = byteValue;
 					continue;
 				}
 
-				if (ConsoleHelper.TryParseSByte(parameters[i], args[nextArg], out sbyte sbyteVal))
+				if (ConsoleHelper.TryParseSByte(Parameters[i], args[nextArg], out var sbyteValue))
 				{
-					objectParams[i] = sbyteVal;
+					objectParams[i] = sbyteValue;
 					continue;
 				}
 
-				if (ConsoleHelper.TryParseChar(parameters[i], args[nextArg], out char charVal))
+				if (ConsoleHelper.TryParseChar(Parameters[i], args[nextArg], out var charValue))
 				{
-					objectParams[i] = charVal;
+					objectParams[i] = charValue;
 					continue;
 				}
 
-				if (ConsoleHelper.TryParseDecimal(parameters[i], args[nextArg], out decimal decimalValue))
+				if (ConsoleHelper.TryParseDecimal(Parameters[i], args[nextArg], out var decimalValue))
 				{
 					objectParams[i] = decimalValue;
 					continue;
 				}
 
-				if (ConsoleHelper.TryParseFloat(parameters[i], args[nextArg], out float floatValue))
+				if (ConsoleHelper.TryParseFloat(Parameters[i], args[nextArg], out var floatValue))
 				{
 					objectParams[i] = floatValue;
 					continue;
 				}
+				
+				if (ConsoleHelper.TryParseDouble(Parameters[i], args[nextArg], out var doubleValue))
+				{
+					objectParams[i] = doubleValue;
+					continue;
+				}
 
-				if (ConsoleHelper.TryParseInt(parameters[i], args[nextArg], out int intValue))
+				if (ConsoleHelper.TryParseInt(Parameters[i], args[nextArg], out var intValue))
 				{
 					objectParams[i] = intValue;
 					continue;
 				}
 
-				if (ConsoleHelper.TryParseUInt(parameters[i], args[nextArg], out uint uintValue))
+				if (ConsoleHelper.TryParseUInt(Parameters[i], args[nextArg], out var uintValue))
 				{
 					objectParams[i] = uintValue;
 					continue;
 				}
 
-				if (ConsoleHelper.TryParseLong(parameters[i], args[nextArg], out long longValue))
+				if (ConsoleHelper.TryParseLong(Parameters[i], args[nextArg], out var longValue))
 				{
 					objectParams[i] = longValue;
 					continue;
 				}
 
-				if (ConsoleHelper.TryParseULong(parameters[i], args[nextArg], out ulong ulongValue))
+				if (ConsoleHelper.TryParseULong(Parameters[i], args[nextArg], out var ulongValue))
 				{
 					objectParams[i] = ulongValue;
 					continue;
 				}
 
-				if (ConsoleHelper.TryParseShort(parameters[i], args[nextArg], out short shortValue))
+				if (ConsoleHelper.TryParseShort(Parameters[i], args[nextArg], out var shortValue))
 				{
 					objectParams[i] = shortValue;
 					continue;
 				}
 
-				if (ConsoleHelper.TryParseUshort(parameters[i], args[nextArg], out ushort ushortValue))
+				if (ConsoleHelper.TryParseUshort(Parameters[i], args[nextArg], out var ushortValue))
 				{
 					objectParams[i] = ushortValue;
 					continue;
 				}
 
-				if (ConsoleHelper.TryParseString(parameters[i], args[nextArg]))
+				if (ConsoleHelper.TryParseString(Parameters[i]))
 				{
 					objectParams[i] = args[nextArg];
 					continue;
 				}
-
-				
 				
 				// Failed to parse command.
 				success = InformFailedParse(i, FailReason.ParseFailed);
@@ -157,25 +135,25 @@ namespace DeveloperConsole
 
 			if (success)
 			{
-				methodInfo.Invoke(null, objectParams);
+				MethodInfo.Invoke(null, objectParams);
 			}
 		}
-
+		
 		private bool InformFailedParse(int argPos, FailReason reason)
 		{
 			switch (reason)
 			{
 				case FailReason.ParseFailed:
-					ConsoleSystem.LogError($"Failed to run command. Failed to parse arg at pos {argPos}.");
+					DevConsole.LogError($"Failed to run command. Failed to parse arg at pos {argPos}.");
 					break;
 				case FailReason.NoArgsPassed:
-					ConsoleSystem.LogError("Failed to run command. This command requires args to be passed.");
+					DevConsole.LogError("Failed to run command. This command requires args to be passed.");
 					break;
 				case FailReason.NotEnoughArgs:
-					ConsoleSystem.LogError("Failed to run command. Not enough args passed.");
+					DevConsole.LogError("Failed to run command. Not enough args passed.");
 					break;
 				default:
-					ConsoleSystem.LogError($"Failed to run command. Arg type unknown or failed to parse an arg at pos {argPos}.");
+					DevConsole.LogError($"Failed to run command. Arg type unknown or failed to parse an arg at pos {argPos}.");
 					break;
 			}
 			
@@ -196,6 +174,21 @@ namespace DeveloperConsole
 			/// Used when no enough args have been passed by the user.
 			/// </summary>
 			NotEnoughArgs
+		}
+
+		public override string ToString()
+		{
+			using(var sb = ZString.CreateStringBuilder())
+			{
+				foreach (var alias in Aliases)
+				{
+					sb.Append(alias);
+				}
+				
+				sb.Append(Description);
+
+				return sb.ToString();
+			} 
 		}
 	}
 }

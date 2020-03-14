@@ -1,11 +1,16 @@
 {
-    "name": "com.lyrebird.developerconsole",
-    "version": "2.5.0",
-    "displayName": "Developer Console",
-    "description": "A developer console that can execute command and help with debugging projects.",
-    "unity": "2019.1",
-    "unityRelease": "3f1",
-    "author": {
-      "name": "Lyrebird Games"
-    } 
+  "name": "com.tempus.developerconsole",
+  "version": "1.0.0",
+  "displayName": "Developer Console",
+  "description": "A tool to log events at runtime and execute command methods",
+  "unity": "2019.3",
+  "unityRelease": "1f1",
+  "keywords": [
+    "debug"
+  ],
+  "author": {
+    "name": "Lyrebird Games",
+    "email": "lyrebirdgamesofficial@gmail.com",
+    "url": "https://gitlab.com/lyrebird-games"
   }
+}
