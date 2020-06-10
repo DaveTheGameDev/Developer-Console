@@ -36,6 +36,8 @@ namespace Debugging.DeveloperConsole
 			inputField.onSubmit.AddListener(SubmitInput);
 			DontDestroyOnLoad(gameObject);
 			
+			DevConsole.LogMessage("Developer Console Initialized...", false);
+			
 			Application.logMessageReceived += UnityLogMessageReceived;
 			Application.logMessageReceivedThreaded += UnityLogMessageReceived;
 		}

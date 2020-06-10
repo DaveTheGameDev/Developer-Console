@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Cysharp.Text
 {
-    public partial struct Utf8ValueStringBuilder : IDisposable, IBufferWriter<byte>
+    public partial struct Utf8ValueStringBuilder : IDisposable, IBufferWriter<byte>, IResettableBufferWriter<byte>
     {
         public delegate bool TryFormat<T>(T value, Span<byte> destination, out int written, StandardFormat format);
 
@@ -93,7 +93,7 @@ namespace Cysharp.Text
             index = 0;
         }
 
-        void TryGrow(int sizeHint)
+        public void TryGrow(int sizeHint)
         {
             if (buffer.Length < index + sizeHint)
             {
@@ -101,7 +101,7 @@ namespace Cysharp.Text
             }
         }
 
-        void Grow(int sizeHint = 0)
+        public void Grow(int sizeHint)
         {
             var nextSize = buffer.Length * 2;
             if (sizeHint != 0)
@@ -189,7 +189,7 @@ namespace Cysharp.Text
         {
             if (!FormatterCache<T>.TryFormatDelegate(value, buffer.AsSpan(index), out var written, default))
             {
-                Grow();
+                Grow(written);
                 if (!FormatterCache<T>.TryFormatDelegate(value, buffer.AsSpan(index), out written, default))
                 {
                     ThrowArgumentException(nameof(value));
@@ -206,6 +206,14 @@ namespace Cysharp.Text
         }
 
         // Output
+
+        /// <summary>Copy inner buffer to the bufferWriter.</summary>
+        public void CopyTo(IBufferWriter<byte> bufferWriter)
+        {
+            var destination = bufferWriter.GetSpan(index);
+            TryCopyTo(destination, out var written);
+            bufferWriter.Advance(written);
+        }
 
         /// <summary>Copy inner buffer to the destination span.</summary>
         public bool TryCopyTo(Span<byte> destination, out int bytesWritten)
@@ -263,6 +271,11 @@ namespace Cysharp.Text
             index += count;
         }
 
+        void IResettableBufferWriter<byte>.Reset()
+        {
+            index = 0;
+        }
+
         void ThrowArgumentException(string paramName)
         {
             throw new ArgumentException("Can't format argument.", paramName);
@@ -281,7 +294,7 @@ namespace Cysharp.Text
             FormatterCache<T>.TryFormatDelegate = formatMethod;
         }
 
-        static class FormatterCache<T>
+        public static class FormatterCache<T>
         {
             public static TryFormat<T> TryFormatDelegate;
             static FormatterCache()

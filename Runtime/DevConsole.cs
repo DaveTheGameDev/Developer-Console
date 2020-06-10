@@ -108,5 +108,12 @@ namespace Debugging.DeveloperConsole
 		{
 			consoleOutput?.Clear();
 		}
+
+		public static event Action<bool> OnToggleVisibility;
+
+		private static void OnOnToggleVisibility(bool obj)
+		{
+			OnToggleVisibility?.Invoke(obj);
+		}
 	}
 }
