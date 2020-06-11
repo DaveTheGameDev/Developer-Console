@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Cysharp.Text;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -29,6 +30,10 @@ namespace Debugging.DeveloperConsole
 		[SerializeField] private string warningPrefix = "[WARNING]";
 		[SerializeField] private string errorPrefix = "[ERROR]";
 		[SerializeField] private string commandPrefix = ">";
+		
+		private int historyIndex = -1;
+		
+		private static List<string> commandHistory = new List<string>();
 		
 		private void Awake()
 		{
@@ -73,6 +78,8 @@ namespace Debugging.DeveloperConsole
 
 		private void SubmitInput(string input)
 		{
+			historyIndex = -1;
+			commandHistory.Add(input);
 			DevConsole.ExecuteCommand(input);
 			inputField.text = null;
 			EventSystem.current.SetSelectedGameObject(null);
@@ -81,19 +88,45 @@ namespace Debugging.DeveloperConsole
 
 		private void Update()
 		{
-			if (Input.GetKeyDown(KeyCode.BackQuote))
+			if (Input.GetKeyDown(KeyCode.F3))
 			{
+				inputField.text = string.Empty;
 				consoleRoot.SetActive(!consoleRoot.activeSelf);
-
+				
+				Canvas.ForceUpdateCanvases();
+				
 				if (IsOpen)
 				{
 					inputField.Select();
-					inputField.text = null;
+					historyIndex = -1;
 				}
 				else
 				{
 					EventSystem.current.SetSelectedGameObject(null);
 				}
+			}
+			
+			if (Input.GetKeyDown(KeyCode.UpArrow))
+			{
+				if(commandHistory.Count == 0)
+					return;
+					
+				historyIndex = Mathf.Min(++historyIndex, commandHistory.Count -1);
+				inputField.SetTextWithoutNotify(commandHistory[historyIndex]);
+			}
+
+			if (Input.GetKeyDown(KeyCode.DownArrow))
+			{
+				historyIndex = Mathf.Max(--historyIndex, -1);
+				inputField.SetTextWithoutNotify(historyIndex == -1 ? string.Empty : commandHistory[historyIndex]);
+			}
+			
+			if (Input.GetKeyDown(KeyCode.Escape))
+			{
+				inputField.text = "";
+				Canvas.ForceUpdateCanvases();
+				
+				consoleRoot.SetActive(false);
 			}
 		}
 
