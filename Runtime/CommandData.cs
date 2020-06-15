@@ -1,39 +1,38 @@
 ﻿using System;
 using System.Reflection;
-using Cysharp.Text;
-using UnityEngine;
+using System.Text;
 
-namespace Debugging.DeveloperConsole
+namespace DeveloperConsole
 {
-	public struct CommandData
-	{
-		public readonly string[] Aliases;
-		public readonly string Description;
-		public readonly Type[] Parameters;
-		public readonly MethodInfo MethodInfo;
-
-		public CommandData(string[] aliases, string description, Type[] parameters, MethodInfo methodInfo)
-		{
-			Aliases = aliases;
-			Description = description;
-			Parameters = parameters;
-			MethodInfo = methodInfo;
-		}
-
-		public void Execute(string[] args)
+    public readonly struct CommandData
+    {
+        public readonly string[] Aliases;
+        private readonly string description;
+        private readonly MethodInfo methodInfo;
+        private readonly Type[] parameters;
+        
+        public CommandData(string[] aliases, string description, MethodInfo methodInfo, Type[] parameters)
+        {
+            Aliases = aliases;
+            this.description = description;
+            this.methodInfo = methodInfo;
+            this.parameters = parameters;
+        }
+        
+        public void Execute(string[] args)
 		{
 			bool success = true;
 			
-			if (Parameters == null || Parameters.Length == 0)
+			if (parameters == null || parameters.Length == 0)
 			{
-				MethodInfo.Invoke(null, null);
+				methodInfo.Invoke(null, null);
 				return;
 			}
 			
-			object[] objectParams = new object[Parameters.Length];
+			object[] objectParams = new object[parameters.Length];
 
 			int nextArg = 0;
-			for (int i = 0; i < Parameters.Length; i++)
+			for (int i = 0; i < parameters.Length; i++)
 			{
 				// Increase next arg index here to make sure indexing order does not go out of sync.
 				nextArg++;
@@ -45,85 +44,85 @@ namespace Debugging.DeveloperConsole
 					break;
 				}
 
-				if (ConsoleHelper.TryParseBool(Parameters[i], args[nextArg], out var boolValue))
+				if (DevConsoleHelper.TryParseBool(parameters[i], args[nextArg], out var boolValue))
 				{
 					objectParams[i] = boolValue;
 					continue;
 				}
 
-				if (ConsoleHelper.TryParseByte(Parameters[i], args[nextArg], out var byteValue))
+				if (DevConsoleHelper.TryParseByte(parameters[i], args[nextArg], out var byteValue))
 				{
 					objectParams[i] = byteValue;
 					continue;
 				}
 
-				if (ConsoleHelper.TryParseSByte(Parameters[i], args[nextArg], out var sbyteValue))
+				if (DevConsoleHelper.TryParseSByte(parameters[i], args[nextArg], out var sbyteValue))
 				{
 					objectParams[i] = sbyteValue;
 					continue;
 				}
 
-				if (ConsoleHelper.TryParseChar(Parameters[i], args[nextArg], out var charValue))
+				if (DevConsoleHelper.TryParseChar(parameters[i], args[nextArg], out var charValue))
 				{
 					objectParams[i] = charValue;
 					continue;
 				}
 
-				if (ConsoleHelper.TryParseDecimal(Parameters[i], args[nextArg], out var decimalValue))
+				if (DevConsoleHelper.TryParseDecimal(parameters[i], args[nextArg], out var decimalValue))
 				{
 					objectParams[i] = decimalValue;
 					continue;
 				}
 
-				if (ConsoleHelper.TryParseFloat(Parameters[i], args[nextArg], out var floatValue))
+				if (DevConsoleHelper.TryParseFloat(parameters[i], args[nextArg], out var floatValue))
 				{
 					objectParams[i] = floatValue;
 					continue;
 				}
 				
-				if (ConsoleHelper.TryParseDouble(Parameters[i], args[nextArg], out var doubleValue))
+				if (DevConsoleHelper.TryParseDouble(parameters[i], args[nextArg], out var doubleValue))
 				{
 					objectParams[i] = doubleValue;
 					continue;
 				}
 
-				if (ConsoleHelper.TryParseInt(Parameters[i], args[nextArg], out var intValue))
+				if (DevConsoleHelper.TryParseInt(parameters[i], args[nextArg], out var intValue))
 				{
 					objectParams[i] = intValue;
 					continue;
 				}
 
-				if (ConsoleHelper.TryParseUInt(Parameters[i], args[nextArg], out var uintValue))
+				if (DevConsoleHelper.TryParseUInt(parameters[i], args[nextArg], out var uintValue))
 				{
 					objectParams[i] = uintValue;
 					continue;
 				}
 
-				if (ConsoleHelper.TryParseLong(Parameters[i], args[nextArg], out var longValue))
+				if (DevConsoleHelper.TryParseLong(parameters[i], args[nextArg], out var longValue))
 				{
 					objectParams[i] = longValue;
 					continue;
 				}
 
-				if (ConsoleHelper.TryParseULong(Parameters[i], args[nextArg], out var ulongValue))
+				if (DevConsoleHelper.TryParseULong(parameters[i], args[nextArg], out var ulongValue))
 				{
 					objectParams[i] = ulongValue;
 					continue;
 				}
 
-				if (ConsoleHelper.TryParseShort(Parameters[i], args[nextArg], out var shortValue))
+				if (DevConsoleHelper.TryParseShort(parameters[i], args[nextArg], out var shortValue))
 				{
 					objectParams[i] = shortValue;
 					continue;
 				}
 
-				if (ConsoleHelper.TryParseUshort(Parameters[i], args[nextArg], out var ushortValue))
+				if (DevConsoleHelper.TryParseUshort(parameters[i], args[nextArg], out var ushortValue))
 				{
 					objectParams[i] = ushortValue;
 					continue;
 				}
 
-				if (ConsoleHelper.TryParseString(Parameters[i]))
+				if (DevConsoleHelper.TryParseString(parameters[i]))
 				{
 					objectParams[i] = args[nextArg];
 					continue;
@@ -135,7 +134,7 @@ namespace Debugging.DeveloperConsole
 
 			if (success)
 			{
-				MethodInfo.Invoke(null, objectParams);
+				methodInfo.Invoke(null, objectParams);
 			}
 		}
 		
@@ -178,17 +177,16 @@ namespace Debugging.DeveloperConsole
 
 		public override string ToString()
 		{
-			using(var sb = ZString.CreateStringBuilder())
-			{
-				foreach (var alias in Aliases)
-				{
-					sb.Append(alias);
-				}
-				
-				sb.Append(Description);
+			var sb = new StringBuilder();
 
-				return sb.ToString();
-			} 
+			for (var i = 0; i < Aliases.Length; i++)
+			{
+				sb.Append(Aliases[i]);
+				sb.Append(i != Aliases.Length -1 ? ", " : ": ");
+			}
+			
+			sb.Append(description);
+			return sb.ToString();
 		}
-	}
+    }
 }

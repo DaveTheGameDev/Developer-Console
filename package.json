@@ -1,16 +1,15 @@
 {
   "name": "com.tempus.developerconsole",
-  "version": "1.0.0",
+  "version": "3.0.0",
   "displayName": "Developer Console",
   "description": "A tool to log events at runtime and execute command methods",
-  "unity": "2019.3",
-  "unityRelease": "1f1",
+  "unity": "2019.4",
+  "unityRelease": "0f1",
   "keywords": [
     "debug"
   ],
   "author": {
-    "name": "Lyrebird Games",
-    "email": "lyrebirdgamesofficial@gmail.com",
-    "url": "https://gitlab.com/lyrebird-games"
+    "name": "David Conway",
+    "email": "dconwaydev@gmail.com"
   }
 }
