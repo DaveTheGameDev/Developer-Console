@@ -45,8 +45,8 @@ You can use any built in C# data type
 Example command with parameters
 
 ```cs
-[ConCommand("add", "clears the console window")]
-[ConCommandDesc("add 1 2")]
+[ConCommand("add")]
+[ConCommandDesc("add two numbers together and print output")]
 private static void Add(int a, int b)
 {
    DevConsole.LogMessage((a + b).ToString());
