@@ -1,18 +1,20 @@
 # Developer Console
 
-I made this system to handle executing commands for C# games.
-This project has been setup as a unity package but can be used in any C# project.
-
-Add this to your unity project through the package manifest
-"https://github.com/DaveTheGameDev/Developer-Console.git",
+I made this system to handle executing commands for C# projects/games.
 
 If you find a bug or have a suggestion feel free to open an issue or a create a pull request
 
 ## Example Usage
 
+### Init
+
+You need to call ``DevConsole.Initialize();`` before using the console system.   
+You can then set your output interface like so ``DevConsole.SetOutput(new SystemConsoleOutput());``
+
+See ``SystemConsoleOutput.cs`` as an example in order to make your own output.
 ### Console Command
 
-Commands must be static methods. The reason i designed it to not support non static methods is because i felt as though it would lead to spaghetti code if you have random commands thrown into gameplay code.With static methods you can have your commands self contained in a single static class that accesses managers for specific gameplay objects.
+Commands must be static methods. The reason i designed it to not support non static methods is because i felt as though it would lead to spaghetti code if you have random commands thrown into gameplay code. With static methods you can have your commands self contained in a single static class that accesses managers for specific gameplay objects.
 
 ```cs
 // Commands can have multiple command aliases
@@ -76,15 +78,3 @@ You can output convar value
 // Print ExampleConVar value to console
 DevConsole.ExecuteCommand("exampleconvar")
 ```
-
-## known Issues / Limitations
-
-* Docs for adding new types as parameters do not exist yet. To add new commands you can take a look at DevConsoleHelper.cs
-
-## TODO
-
-* [ ] Convar on changed hooks (useful for network syncing variables)
-* [ ] Dynamic Type Registration
-* [ ] Focused Object System
-* [ ] Code Documentation and Wiki
-* [ ] Ensure code is as clean as possible

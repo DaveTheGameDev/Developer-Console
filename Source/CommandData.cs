@@ -1,20 +1,21 @@
 ﻿using System;
 using System.Reflection;
 using System.Text;
+using AstrayEngine;
 
 namespace DeveloperConsole
 {
     public readonly struct CommandData
     {
-        public readonly string[] Aliases;
-        private readonly string description;
+        public readonly string Alias;
+        public readonly string Description;
         private readonly MethodInfo methodInfo;
         private readonly Type[] parameters;
         
-        public CommandData(string[] aliases, string description, MethodInfo methodInfo, Type[] parameters)
+        public CommandData(string alias, string description, MethodInfo methodInfo, Type[] parameters)
         {
-            Aliases = aliases;
-            this.description = description;
+            Alias = alias;
+            this.Description = description;
             this.methodInfo = methodInfo;
             this.parameters = parameters;
         }
@@ -178,14 +179,9 @@ namespace DeveloperConsole
 		public override string ToString()
 		{
 			var sb = new StringBuilder();
-
-			for (var i = 0; i < Aliases.Length; i++)
-			{
-				sb.Append(Aliases[i]);
-				sb.Append(i != Aliases.Length -1 ? ", " : ": ");
-			}
-			
-			sb.Append(description);
+			sb.Append(Alias);
+			sb.Append(": ");
+			sb.Append(Description);
 			return sb.ToString();
 		}
     }

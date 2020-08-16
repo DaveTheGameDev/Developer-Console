@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace DeveloperConsole
+namespace AstrayEngine
 {
     [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
     public class ConVar : Attribute

@@ -2,14 +2,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using AstrayEngine;
 
 namespace DeveloperConsole
 {
      internal static class DevConsoleHelper
     {
-        internal static List<ConVarData> RegisterConVars()
+        internal static Dictionary<string, ConVarData> RegisterConVars()
         {
-            var conVars = new List<ConVarData>();
+            var conVars = new Dictionary<string, ConVarData>();
 
             foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
             {
@@ -20,7 +21,10 @@ namespace DeveloperConsole
 		                var conVar = fieldInfo.GetCustomAttribute<ConVar>();
 
 		                if (conVar != null)
-			                conVars.Add(new ConVarData(fieldInfo, conVar.Description));
+		                {
+			                var cVar = new ConVarData(fieldInfo, conVar.Description);
+			                conVars.Add(cVar.Alias, cVar);
+		                }
 	                }
                 }
             }
@@ -28,9 +32,9 @@ namespace DeveloperConsole
             return conVars;
         }
         
-        public static List<CommandData> RegisterCommands()
+        public static Dictionary<string, CommandData> RegisterCommands()
         {
-	        var commands = new List<CommandData>();
+	        var commands = new Dictionary<string, CommandData>();
 
 	        foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
 	        {
@@ -47,31 +51,12 @@ namespace DeveloperConsole
 				        if(command == null)
 					        continue;
 
-				        if (command.CommandAliases?.Length == 0)
-				        {
-					        //Debug.Log($"Command found with no name, using method name as alias");
-					        command.CommandAliases = new[] { method.Name.ToLower()};
-				        }
-						
-				        var data = CreateCommandData(command.CommandAliases, commandDesc?.Description, paramList, method);
+				        var data = CreateCommandData(command.Alias, commandDesc?.Description, paramList, method);
 
-				        bool validCommand = true;
-						
-				        foreach (CommandData commandData in commands)
-				        {
-					        foreach (string alias in data.Aliases)
-					        {
-						        if (commandData.Aliases.Contains(alias))
-							        validCommand = false;
-								
-						        if (!validCommand)
-						        {
-							        throw new Exception("Console command alias \"{alias}\" already in use");
-						        }
-					        }
-				        }
+				        if (commands.ContainsKey(data.Alias))
+					        throw new Exception("Console command alias \"{alias}\" already in use");
 
-				        commands.Add(data);
+				        commands.Add(data.Alias.ToLower(), data);
 			        }
 		        }
 	        }
@@ -79,15 +64,15 @@ namespace DeveloperConsole
 	        return commands;
         }
         
-        private static CommandData CreateCommandData(string[] aliases, string description, Type[] paramList, MethodInfo method)
+        private static CommandData CreateCommandData(string alias, string description, Type[] paramList, MethodInfo method)
         {
-	        return new CommandData(aliases, description, method, paramList);
+	        return new CommandData(alias, description, method, paramList);
         }
         
         public static string[] ParseCommand(string commandInput)
         {
-            List<string> result = new List<string>();
-            int index = 0;
+            var result = new List<string>();
+            var index = 0;
 
             while (index < commandInput.Length)
             {

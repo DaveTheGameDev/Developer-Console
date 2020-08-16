@@ -5,11 +5,11 @@ namespace DeveloperConsole
     [AttributeUsage(AttributeTargets.Method)]
     public class ConCommand : Attribute
     {
-        public string[] CommandAliases;
+        public string Alias;
 
-        public ConCommand(params string[] commandAliases)
+        public ConCommand(string alias)
         {
-            CommandAliases = commandAliases;
+            Alias = alias;
         }
     }
     
